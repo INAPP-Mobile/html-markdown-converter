@@ -1,88 +1,47 @@
-# HTML to Markdown Converter Template
+---
+name: HTML to Markdown Converter
+description: A lightweight REST API that converts HTML to Markdown using Turndown. Deploy on Railway with one click.
+---
 
-A lightweight, efficient template for converting HTML to Markdown using TypeScript and Node.js, designed for easy deployment on Railway.
+# HTML to Markdown Converter
+
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/new?template=https://github.com/INAPP-Mobile/html-markdown-converter)
+
+A lightweight REST API for converting HTML to Markdown using [Turndown](https://github.com/mixmark-io/turndown). Deploy on Railway with zero configuration.
 
 ## Features
 
-- 🚀 Fast HTML to Markdown conversion using [Turndown](https://github.com/mixmark-io/turndown)
-- 🌐 RESTful API endpoint for conversion
-- 🩺 Health check endpoint
-- 📦 Ready for deployment on Railway
-- 🛠️ TypeScript support with excellent developer experience
-- 🐳 Dockerfile included for containerized deployment
-- ✅ Comprehensive error handling
+- Fast HTML to Markdown conversion
+- RESTful API with health check and conversion endpoints
+- TypeScript with full type safety
+- Error handling for invalid input
+- Docker support for local development
 
-## Table of Contents
+## Deploy to Railway
 
-- [Features](#features)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-  - [Development](#development)
-- [Usage](#usage)
-  - [API Endpoints](#api-endpoints)
-  - [Example Request](#example-request)
-- [Deployment](#deployment)
-  - [Deploying to Railway](#deploying-to-railway)
-  - [Deploying with Docker](#deploying-with-docker)
-- [Configuration](#configuration)
-- [Customization](#customization)
-- [License](#license)
+### One-Click Deploy
 
-## Getting Started
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/new?template=https://github.com/INAPP-Mobile/html-markdown-converter)
 
-### Prerequisites
+### Manual Deploy
 
-- Node.js (v16 or higher)
-- npm (v7 or higher) or yarn
-
-### Installation
-
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   cd html-markdown-converter
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-### Development
-
-To start the development server with hot-reload:
-
-```bash
-npm run dev
-```
-
-The server will be available at `http://localhost:3000`.
-
-To build the project for production:
-
-```bash
-npm run build
-```
-
-This will compile the TypeScript code to JavaScript in the `dist` directory.
+1. Fork or clone this repository to your GitHub account.
+2. In the [Railway dashboard](https://railway.app/new), click **New Project** → **Deploy from GitHub**.
+3. Select your repository.
+4. Railway auto-detects the Dockerfile and deploys — no configuration needed.
+5. Access your service at the generated `*.railway.app` URL.
 
 ## Usage
 
 ### API Endpoints
 
 #### GET `/`
-Health check endpoint to verify the service is running.
-
-**Response:**
-```text
-HTML to Markdown Converter is running!
-```
+Health check. Returns `HTML to Markdown Converter is running!`.
 
 #### POST `/convert`
-Converts HTML string to Markdown.
+Converts HTML to Markdown.
 
-**Request Body:**
+**Request:**
 ```json
 {
   "html": "<h1>Hello World</h1><p>This is a <strong>test</strong>.</p>"
@@ -96,72 +55,54 @@ Converts HTML string to Markdown.
 }
 ```
 
-**Error Responses:**
-- 400 Bad Request: If the `html` field is missing or not a string
-- 500 Internal Server Error: If an error occurs during conversion
-
-### Example Request with curl
+### Example with curl
 
 ```bash
-curl -X POST http://localhost:3000/convert \
+curl -X POST https://your-service.up.railway.app/convert \
   -H "Content-Type: application/json" \
   -d '{"html": "<h1>Hello World</h1><p>This is a <strong>test</strong>.</p>"}'
 ```
 
-## Deployment
+## Local Development
 
-### Deploying to Railway
+### Prerequisites
 
-1. Push your code to a GitHub repository.
-2. In the Railway dashboard, click "New Project" and select "Deploy from GitHub".
-3. Choose your repository.
-4. Railway will automatically detect the `.railway.json` file and use the build and start commands defined therein.
-5. Set the `PORT` environment variable if needed (Railway sets this automatically).
-6. Your service will be deployed and accessible via the provided URL.
+- Node.js 18+
+- npm
 
-### Deploying with Docker
+### Setup
 
-1. Build the Docker image:
-   ```bash
-   docker build -t html-markdown-converter .
-   ```
+```bash
+git clone https://github.com/INAPP-Mobile/html-markdown-converter
+cd html-markdown-converter
+npm install
+npm run dev     # starts with hot-reload at http://localhost:3000
+```
 
-2. Run the container:
-   ```bash
-   docker run -p 3000:3000 html-markdown-converter
-   ```
+### Production build
 
-3. The service will be available at `http://localhost:3000`.
+```bash
+npm run build
+npm start       # serves from dist/
+```
 
-## Configuration
+### Docker
 
-The service uses the following environment variables:
+```bash
+docker build -t html-markdown-converter .
+docker run -p 3000:3000 html-markdown-converter
+```
 
-- `PORT`: The port on which the server listens (defaults to 3000)
+## Environment Variables
+
+| Variable | Default | Description |
+|---|---|---|
+| `PORT` | `3000` | Port the server listens on (Railway sets this automatically) |
 
 ## Customization
 
-### Modifying Conversion Behavior
-
-The conversion logic is in `src/converter.ts`. You can customize the Turndown service by modifying the `htmlToMarkdown` function.
-
-For example, to change the heading style to ATX:
-
-```typescript
-export function htmlToMarkdown(html: string): string {
-  const turndownService = new TurndownService({ headingStyle: 'atx' });
-  return turndownService.turndown(html);
-}
-```
-
-To add custom rules, refer to the [Turndown documentation](https://github.com/mixmark-io/turndown#custom-rules).
+Edit `src/converter.ts` to add custom Turndown rules. See the [Turndown documentation](https://github.com/mixmark-io/turndown#custom-rules) for available options.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Acknowledgments
-
-- [Turndown](https://github.com/mixmark-io/turndown) for the HTML to Markdown conversion
-- [Express.js](https://expressjs.com/) for the web framework
-- [TypeScript](https://www.typescriptlang.org/) for type safety
+MIT

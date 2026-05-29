@@ -1,0 +1,25 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": ["AGENTS.md", ".opencode/instructions.md"],
+  "agent": {
+    "pm": {
+      "description": "Orchestrates the Railway template project — delegates template coding to @coder and deploy verification to @reviewer. NEVER edits code directly.",
+      "mode": "primary",
+      "temperature": 0.2,
+      "instructions": ["AGENTS.md", ".opencode/instructions.md"],
+      "permission": {
+        "read": "allow",
+        "glob": "allow",
+        "grep": "allow",
+        "list": "allow",
+        "task": { "*": "deny", "coder": "allow", "reviewer": "allow" },
+        "bash": "ask",
+        "edit": "deny",
+        "webfetch": "allow",
+        "write": "deny"
+      }
+    },
+    "coder": { "file": ".opencode/agents/coder.md" },
+    "reviewer": { "file": ".opencode/agents/reviewer.md" }
+  }
+}
