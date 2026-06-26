@@ -35,4 +35,30 @@ describe("htmlToMarkdown", () => {
     const expected = "Hello\n\nWorld";
     expect(htmlToMarkdown(html)).toBe(expected);
   });
+
+  describe("with options", () => {
+    it("uses atx heading style when specified", () => {
+      const html = "<h1>Hello</h1><h2>World</h2>";
+      const result = htmlToMarkdown(html, { headingStyle: "atx" });
+      expect(result).toBe("# Hello\n\n## World");
+    });
+
+    it("uses dash bullet list marker when specified", () => {
+      const html = "<ul><li>One</li><li>Two</li></ul>";
+      const result = htmlToMarkdown(html, { bulletListMarker: "-" });
+      expect(result).toBe("-   One\n-   Two");
+    });
+
+    it("uses fenced code blocks when specified", () => {
+      const html = "<pre><code>const x = 1;</code></pre>";
+      const result = htmlToMarkdown(html, { codeBlockStyle: "fenced" });
+      expect(result).toBe("```\nconst x = 1;\n```");
+    });
+
+    it("uses asterisk emphasis when specified", () => {
+      const html = "<p>This is <em>italic</em>.</p>";
+      const result = htmlToMarkdown(html, { emDelimiter: "*" });
+      expect(result).toBe("This is *italic*.");
+    });
+  });
 });

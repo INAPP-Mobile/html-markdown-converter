@@ -1,21 +1,29 @@
 import TurndownService from 'turndown';
 
 /**
- * Converts HTML string to Markdown string.
- * @param html - The HTML string to convert.
- * @returns The Markdown string.
+ * Options that can be passed to the converter.
+ * Maps directly to TurndownService options.
  */
-export function htmlToMarkdown(html: string): string {
-  const turndownService = new TurndownService();
-  return turndownService.turndown(html);
+export interface ConversionOptions {
+  headingStyle?: 'setext' | 'atx';
+  hr?: string;
+  bulletListMarker?: '-' | '+' | '*';
+  codeBlockStyle?: 'indented' | 'fenced';
+  fence?: '```' | '~~~';
+  emDelimiter?: '_' | '*';
+  strongDelimiter?: '**' | '__';
+  linkStyle?: 'inlined' | 'referenced';
+  linkReferenceStyle?: 'full' | 'collapsed' | 'shortcut';
+  preformattedCode?: boolean;
 }
 
-// Optional: If you want to customize the rules, you can do so here.
-// For example, to preserve certain HTML tags or change the heading style.
-// const turndownService = new TurndownService({ headingStyle: 'atx' });
-// turndownService.addRule('strikethrough', {
-//   filter: ['del', 's', 'strike'],
-//   replacement: function (content) {
-//     return `~~${content}~~`;
-//   }
-// });
+/**
+ * Converts HTML string to Markdown string.
+ * @param html - The HTML string to convert.
+ * @param options - Optional Turndown configuration overrides.
+ * @returns The Markdown string.
+ */
+export function htmlToMarkdown(html: string, options?: ConversionOptions): string {
+  const turndownService = new TurndownService(options ?? {});
+  return turndownService.turndown(html);
+}

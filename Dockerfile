@@ -1,23 +1,18 @@
-# Use Node.js 18-alpine as the base image
-FROM node:18-alpine
-
-# Set working directory
+# Stage 1: Build
+FROM node:22-alpine AS builder
 WORKDIR /app
-
-# Copy package files
 COPY package*.json ./
-
-# Install dependencies
 RUN npm ci --ignore-scripts
-
-# Copy source code
 COPY . .
-
-# Build the TypeScript code
 RUN npm run build
 
-# Expose the port the app runs on
+# Stage 2: Runtime
+FROM node:22-alpine
+WORKDIR /app
+RUN addgroup --system app && adduser --system --ingroup app app
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/node_modules ./node_modules
+USER app
 EXPOSE 3000
-
-# Start the server
 CMD ["npm", "start"]

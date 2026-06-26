@@ -13,9 +13,12 @@ A lightweight REST API for converting HTML to Markdown using [Turndown](https://
 
 - Fast HTML to Markdown conversion
 - RESTful API with health check and conversion endpoints
+- **Configurable** — control heading style, list markers, code blocks, emphasis delimiters, and more
+- **CORS-enabled** — call directly from browser-based clients
 - TypeScript with full type safety
 - Error handling for invalid input
-- Docker support for local development
+- **Multi-stage Docker build** — smaller, more secure production image (Node 22, non-root user)
+- Railway template metadata (`railway.json`) for a polished marketplace listing
 
 ## Deploy to Railway
 
@@ -38,6 +41,17 @@ A lightweight REST API for converting HTML to Markdown using [Turndown](https://
 #### GET `/`
 Health check. Returns `HTML to Markdown Converter is running!`.
 
+#### GET `/health`
+JSON health check. Returns version and uptime information.
+
+```json
+{
+  "status": "ok",
+  "version": "1.0.0",
+  "uptime": 1234
+}
+```
+
 #### POST `/convert`
 Converts HTML to Markdown.
 
@@ -55,12 +69,56 @@ Converts HTML to Markdown.
 }
 ```
 
+##### With Options
+All Turndown options are supported via an optional `options` field:
+
+```json
+{
+  "html": "<h1>Hello World</h1><ul><li>Item 1</li><li>Item 2</li></ul>",
+  "options": {
+    "headingStyle": "atx",
+    "bulletListMarker": "-",
+    "codeBlockStyle": "fenced",
+    "emDelimiter": "*",
+    "strongDelimiter": "**",
+    "linkStyle": "inlined",
+    "linkReferenceStyle": "full"
+  }
+}
+```
+
+Available options:
+
+| Option | Values | Default |
+|---|---|---|
+| `headingStyle` | `setext`, `atx` | `setext` |
+| `hr` | any string | `---` |
+| `bulletListMarker` | `-`, `+`, `*` | `*` |
+| `codeBlockStyle` | `indented`, `fenced` | `indented` |
+| `fence` | `` ``` ``, `~~~` | `` ``` `` |
+| `emDelimiter` | `_`, `*` | `_` |
+| `strongDelimiter` | `**`, `__` | `**` |
+| `linkStyle` | `inlined`, `referenced` | `inlined` |
+| `linkReferenceStyle` | `full`, `collapsed`, `shortcut` | `full` |
+| `preformattedCode` | `true`, `false` | `false` |
+
+Omitting `options` entirely (or passing an empty object) uses defaults — fully backward compatible.
+
 ### Example with curl
 
 ```bash
+# Basic conversion
 curl -X POST https://your-service.up.railway.app/convert \
   -H "Content-Type: application/json" \
   -d '{"html": "<h1>Hello World</h1><p>This is a <strong>test</strong>.</p>"}'
+
+# With options
+curl -X POST https://your-service.up.railway.app/convert \
+  -H "Content-Type: application/json" \
+  -d '{"html": "<h1>Hello</h1>", "options": {"headingStyle": "atx"}}'
+
+# Health check
+curl https://your-service.up.railway.app/health
 ```
 
 ## Local Development
@@ -75,6 +133,7 @@ curl -X POST https://your-service.up.railway.app/convert \
 ```bash
 git clone https://github.com/INAPP-Mobile/html-markdown-converter
 cd html-markdown-converter
+cp .env.example .env
 npm install
 npm run dev     # starts with hot-reload at http://localhost:3000
 ```
@@ -93,6 +152,8 @@ docker build -t html-markdown-converter .
 docker run -p 3000:3000 html-markdown-converter
 ```
 
+The multi-stage Dockerfile produces a minimal production image based on `node:22-alpine` running as a non-root user.
+
 ## Environment Variables
 
 | Variable | Default | Description |
@@ -102,6 +163,21 @@ docker run -p 3000:3000 html-markdown-converter
 ## Customization
 
 Edit `src/converter.ts` to add custom Turndown rules. See the [Turndown documentation](https://github.com/mixmark-io/turndown#custom-rules) for available options.
+
+## Project Structure
+
+```
+.
+├── .dockerignore          # Ignored files for Docker builds
+├── .env.example           # Example environment variables
+├── railway.json           # Railway template metadata
+├── Dockerfile             # Multi-stage production build
+├── src/
+│   ├── index.ts           # Express server & routes
+│   ├── converter.ts       # HTML to Markdown conversion logic
+│   └── converter.test.ts  # Unit tests
+└── package.json
+```
 
 ## License
 
