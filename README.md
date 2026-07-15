@@ -5,7 +5,7 @@ description: A lightweight REST API that converts HTML to Markdown using Turndow
 
 # HTML to Markdown Converter
 
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/new?template=https://github.com/INAPP-Mobile/html-markdown-converter)
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.com/deploy/html-to-markdown-converter)
 
 A lightweight REST API for converting HTML to Markdown using [Turndown](https://github.com/mixmark-io/turndown). Deploy on Railway with zero configuration.
 
@@ -24,7 +24,7 @@ A lightweight REST API for converting HTML to Markdown using [Turndown](https://
 
 ### One-Click Deploy
 
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/new?template=https://github.com/INAPP-Mobile/html-markdown-converter)
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.com/deploy/html-to-markdown-converter)
 
 ### Manual Deploy
 
