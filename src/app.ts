@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
-import { htmlToMarkdown, ConversionOptions } from './converter';
+import { htmlToMarkdown, markdownToHtml, ConversionOptions, MarkdownConversionOptions } from './converter';
 
 const app = express();
 const packageJson = require('../package.json');
@@ -34,6 +34,23 @@ app.post('/convert', (req: Request, res: Response) => {
 
     const markdown = htmlToMarkdown(html, options as ConversionOptions | undefined);
     res.json({ markdown });
+  } catch (error) {
+    console.error('Conversion error:', error);
+    res.status(500).json({ error: 'Internal server error during conversion' });
+  }
+});
+
+// Markdown to HTML conversion endpoint
+app.post('/convert-md', (req: Request, res: Response) => {
+  try {
+    const { markdown, options } = req.body;
+
+    if (markdown === undefined || markdown === null || typeof markdown !== 'string') {
+      return res.status(400).json({ error: 'Invalid input: Markdown string is required' });
+    }
+
+    const html = markdownToHtml(markdown, options as MarkdownConversionOptions | undefined);
+    res.json({ html });
   } catch (error) {
     console.error('Conversion error:', error);
     res.status(500).json({ error: 'Internal server error during conversion' });

@@ -96,4 +96,56 @@ describe('API', () => {
       expect(res.body.markdown).toContain('Lorem ipsum');
     });
   });
+
+  describe('POST /convert-md', () => {
+    it('converts Markdown to HTML with defaults', async () => {
+      const res = await request(app)
+        .post('/convert-md')
+        .send({ markdown: '# Hello' });
+      expect(res.status).toBe(200);
+      expect(res.body).toEqual({ html: '<h1>Hello</h1>\n' });
+    });
+
+    it('converts bold and italic text', async () => {
+      const res = await request(app)
+        .post('/convert-md')
+        .send({ markdown: 'This is **bold** and _italic_.' });
+      expect(res.status).toBe(200);
+      expect(res.body).toEqual({
+        html: '<p>This is <strong>bold</strong> and <em>italic</em>.</p>\n',
+      });
+    });
+
+    it('converts a list', async () => {
+      const res = await request(app)
+        .post('/convert-md')
+        .send({ markdown: '- Item 1\n- Item 2' });
+      expect(res.status).toBe(200);
+      expect(res.body.html).toBe('<ul>\n<li>Item 1</li>\n<li>Item 2</li>\n</ul>\n');
+    });
+
+    it('returns 400 for missing markdown field', async () => {
+      const res = await request(app)
+        .post('/convert-md')
+        .send({});
+      expect(res.status).toBe(400);
+      expect(res.body).toEqual({ error: 'Invalid input: Markdown string is required' });
+    });
+
+    it('returns 400 for non-string markdown', async () => {
+      const res = await request(app)
+        .post('/convert-md')
+        .send({ markdown: 123 });
+      expect(res.status).toBe(400);
+      expect(res.body).toEqual({ error: 'Invalid input: Markdown string is required' });
+    });
+
+    it('renders <br> on single newlines when breaks is true', async () => {
+      const res = await request(app)
+        .post('/convert-md')
+        .send({ markdown: 'line one\nline two', options: { breaks: true } });
+      expect(res.status).toBe(200);
+      expect(res.body).toEqual({ html: '<p>line one<br>line two</p>\n' });
+    });
+  });
 });

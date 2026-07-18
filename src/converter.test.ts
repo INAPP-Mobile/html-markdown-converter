@@ -1,4 +1,5 @@
 import { htmlToMarkdown } from "./converter";
+import { markdownToHtml } from "./converter";
 
 describe("htmlToMarkdown", () => {
   it("converts simple HTML to Markdown", () => {
@@ -59,6 +60,63 @@ describe("htmlToMarkdown", () => {
       const html = "<p>This is <em>italic</em>.</p>";
       const result = htmlToMarkdown(html, { emDelimiter: "*" });
       expect(result).toBe("This is *italic*.");
+    });
+  });
+});
+
+describe("markdownToHtml", () => {
+  it("converts a heading to an h1", () => {
+    expect(markdownToHtml("# Hello")).toBe("<h1>Hello</h1>\n");
+  });
+
+  it("converts bold and italic text", () => {
+    expect(markdownToHtml("This is **bold** and _italic_.")).toBe(
+      "<p>This is <strong>bold</strong> and <em>italic</em>.</p>\n"
+    );
+  });
+
+  it("converts an unordered list", () => {
+    expect(markdownToHtml("- Item 1\n- Item 2")).toBe(
+      "<ul>\n<li>Item 1</li>\n<li>Item 2</li>\n</ul>\n"
+    );
+  });
+
+  it("converts an ordered list", () => {
+    expect(markdownToHtml("1. First\n2. Second")).toBe(
+      "<ol>\n<li>First</li>\n<li>Second</li>\n</ol>\n"
+    );
+  });
+
+  it("converts inline code and code blocks", () => {
+    const result = markdownToHtml("Use `foo()` here");
+    expect(result).toBe("<p>Use <code>foo()</code> here</p>\n");
+  });
+
+  it("converts a fenced code block", () => {
+    const md = "```js\nconst x = 1;\n```";
+    const result = markdownToHtml(md);
+    expect(result).toContain("<pre><code class=\"language-js\">");
+    expect(result).toContain("const x = 1;");
+  });
+
+  it("handles empty string", () => {
+    expect(markdownToHtml("")).toBe("");
+  });
+
+  it("escapes HTML in the source text", () => {
+    const result = markdownToHtml("A < B & C > D");
+    expect(result).toBe("<p>A &lt; B &amp; C &gt; D</p>\n");
+  });
+
+  describe("with options", () => {
+    it("renders <br> on single newlines when breaks is true", () => {
+      const result = markdownToHtml("line one\nline two", { breaks: true });
+      expect(result).toBe("<p>line one<br>line two</p>\n");
+    });
+
+    it("does not render <br> on single newlines when breaks is false", () => {
+      const result = markdownToHtml("line one\nline two", { breaks: false });
+      expect(result).toBe("<p>line one\nline two</p>\n");
     });
   });
 });

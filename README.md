@@ -1,18 +1,19 @@
 ---
-name: HTML to Markdown Converter
-description: A lightweight REST API that converts HTML to Markdown using Turndown. Deploy on Railway with one click.
+name: HTML and Markdown Converter
+description: A lightweight REST API that converts HTML to Markdown and Markdown to HTML using Turndown and marked. Deploy on Railway with one click.
 ---
 
-# HTML to Markdown Converter
+# HTML and Markdown Converter
 
 [![Deploy on Railway](https://railway.app/button.svg)](https://railway.com/deploy/html-to-markdown-converter)
 
-A lightweight REST API for converting HTML to Markdown using [Turndown](https://github.com/mixmark-io/turndown). Deploy on Railway with zero configuration.
+A lightweight, bidirectional REST API for converting HTML to Markdown using [Turndown](https://github.com/mixmark-io/turndown) and Markdown to HTML using [marked](https://github.com/markedjs/marked). Deploy on Railway with zero configuration.
 
 ## Features
 
 - Fast HTML to Markdown conversion
-- RESTful API with health check and conversion endpoints
+- Fast Markdown to HTML conversion
+- RESTful API with health check and bidirectional conversion endpoints (`/convert`, `/convert-md`)
 - **Configurable** — control heading style, list markers, code blocks, emphasis delimiters, and more
 - **CORS-enabled** — call directly from browser-based clients
 - TypeScript with full type safety
@@ -104,18 +105,55 @@ Available options:
 
 Omitting `options` entirely (or passing an empty object) uses defaults — fully backward compatible.
 
+#### POST `/convert-md`
+Converts Markdown to HTML.
+
+**Request:**
+```json
+{
+  "markdown": "# Hello World\n\nThis is a **test**."
+}
+```
+
+**Response:**
+```json
+{
+  "html": "<h1>Hello World</h1>\n<p>This is a <strong>test</strong>.</p>\n"
+}
+```
+
+##### With Options
+Markdown conversion supports an optional `options` field:
+
+| Option | Values | Default | Description |
+|---|---|---|---|
+| `gfm` | `true`, `false` | `true` | GitHub Flavored Markdown (tables, strikethrough, task lists, autolinks) |
+| `breaks` | `true`, `false` | `false` | Render single newlines (`\n`) as `<br>` |
+
+Omitting `options` entirely (or passing an empty object) uses defaults.
+
 ### Example with curl
 
 ```bash
-# Basic conversion
+# Basic HTML -> Markdown conversion
 curl -X POST https://your-service.up.railway.app/convert \
   -H "Content-Type: application/json" \
   -d '{"html": "<h1>Hello World</h1><p>This is a <strong>test</strong>.</p>"}'
 
-# With options
+# HTML -> Markdown with options
 curl -X POST https://your-service.up.railway.app/convert \
   -H "Content-Type: application/json" \
   -d '{"html": "<h1>Hello</h1>", "options": {"headingStyle": "atx"}}'
+
+# Markdown -> HTML conversion
+curl -X POST https://your-service.up.railway.app/convert-md \
+  -H "Content-Type: application/json" \
+  -d '{"markdown": "# Hello\n\nThis is **bold**."}'
+
+# Markdown -> HTML with breaks enabled
+curl -X POST https://your-service.up.railway.app/convert-md \
+  -H "Content-Type: application/json" \
+  -d '{"markdown": "line one\nline two", "options": {"breaks": true}}'
 
 # Health check
 curl https://your-service.up.railway.app/health
@@ -162,20 +200,22 @@ The multi-stage Dockerfile produces a minimal production image based on `node:22
 
 ## Customization
 
-Edit `src/converter.ts` to add custom Turndown rules. See the [Turndown documentation](https://github.com/mixmark-io/turndown#custom-rules) for available options.
+Edit `src/converter.ts` to add custom Turndown rules or marked options. See the [Turndown documentation](https://github.com/mixmark-io/turndown#custom-rules) for available options, and the [marked documentation](https://marked.js.org/using_advanced) for advanced Markdown rendering options.
 
 ## Project Structure
 
-```
+```text
 .
 ├── .dockerignore          # Ignored files for Docker builds
 ├── .env.example           # Example environment variables
 ├── railway.json           # Railway template metadata
 ├── Dockerfile             # Multi-stage production build
 ├── src/
-│   ├── index.ts           # Express server & routes
-│   ├── converter.ts       # HTML to Markdown conversion logic
-│   └── converter.test.ts  # Unit tests
+│   ├── index.ts           # Server entrypoint (listens on PORT)
+│   ├── app.ts             # Express app & routes (/convert, /convert-md)
+│   ├── converter.ts       # HTML ↔ Markdown conversion logic
+│   ├── converter.test.ts  # Unit tests for conversion functions
+│   └── api.test.ts        # API endpoint tests
 └── package.json
 ```
 
