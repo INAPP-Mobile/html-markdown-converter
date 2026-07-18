@@ -1,7 +1,6 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import { htmlToMarkdown, markdownToHtml, ConversionOptions, MarkdownConversionOptions } from './converter';
-import { isScannerRequest } from './scanner';
 
 const app = express();
 const packageJson = require('../package.json');
@@ -9,17 +8,6 @@ const packageJson = require('../package.json');
 // Middleware
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
-
-// Scanner and common exploit path blocker — runs before every route
-app.use((req: Request, res: Response, next) => {
-  if (isScannerRequest(req.path)) {
-    // 444: close connection with no response (Caddy convention).
-    // Express sends the status with an empty body — the scanner gets nothing useful.
-    res.status(444).end();
-    return;
-  }
-  next();
-});
 
 // Health check endpoint (plain text — original, kept for backward compat)
 app.get('/', (req: Request, res: Response) => {
