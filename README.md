@@ -5,11 +5,33 @@ description: A lightweight REST API that converts HTML to Markdown and Markdown 
 
 # HTML and Markdown Converter
 
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.com/deploy/html-to-markdown-converter)
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.com/deploy/hospitable-sparkle)
 
 A lightweight, bidirectional REST API for converting HTML to Markdown using [Turndown](https://github.com/mixmark-io/turndown) and Markdown to HTML using [marked](https://github.com/markedjs/marked). Deploy on Railway with zero configuration.
 
-## Features
+## Deploy and Host
+
+### About Hosting
+
+With Railway, you get automatic HTTPS, global CDN, health monitoring, and scalable infrastructure. This service deploys as a single container with zero configuration.
+
+## Why Deploy
+
+- **Zero-config Docker** — Multi-stage Node 22 build, non-root user, small image
+- **REST API** — Bidirectional HTML↔Markdown conversion with CORS support
+- **Instant HTTPS** — Railway provisions a TLS cert and public domain automatically
+- **Health monitoring** — Built-in `/health` endpoint
+
+## Common Use Cases
+
+- Convert HTML emails to Markdown for storage
+- Render Markdown documentation to HTML for web display
+- API integration for content management pipelines
+- Batch conversion via script or automation
+
+## Dependencies for HTML to Markdown Converter
+
+### Deployment Dependencies
 
 - Fast HTML to Markdown conversion
 - Fast Markdown to HTML conversion
@@ -25,7 +47,7 @@ A lightweight, bidirectional REST API for converting HTML to Markdown using [Tur
 
 ### One-Click Deploy
 
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.com/deploy/html-to-markdown-converter)
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.com/deploy/hospitable-sparkle)
 
 ### Manual Deploy
 
